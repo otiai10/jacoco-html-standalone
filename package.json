@@ -1,0 +1,30 @@
+{
+  "name": "jacoco-html-standalone",
+  "version": "0.0.1",
+  "description": "Make jacoco HTML standalone without requiring image files outside",
+  "main": "./lib/index.js",
+  "bin": {
+    "jacoco-html-standalone": "bin/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "otiai10",
+  "license": "MIT",
+  "dependencies": {
+    "jsdom": "^16.2.2",
+    "yargs": "^15.3.1"
+  },
+  "directories": {
+    "lib": "lib"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/otiai10/jacoco-html-standalone.git"
+  },
+  "bugs": {
+    "url": "https://github.com/otiai10/jacoco-html-standalone/issues"
+  },
+  "homepage": "https://github.com/otiai10/jacoco-html-standalone#readme"
+}
