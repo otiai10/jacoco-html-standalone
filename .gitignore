@@ -117,3 +117,7 @@ dist
 
 example
 output.html
+
+lib
+bin
+!src

@@ -1,12 +1,13 @@
 {
   "name": "jacoco-html-asset-bundle",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "Make jacoco HTML standalone without requiring image files outside",
   "main": "./lib/index.js",
   "bin": {
     "jacoco-html-asset-bundle": "bin/index.js"
   },
   "scripts": {
+    "build": "tsc src/**/*.ts --outDir .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "otiai10",
@@ -18,7 +19,11 @@
   "directories": {
     "lib": "lib"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/jsdom": "^16.2.3",
+    "@types/node": "^14.0.13",
+    "typescript": "^3.9.5"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/otiai10/jacoco-html-asset-bundle.git"
