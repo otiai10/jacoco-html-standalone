@@ -35,7 +35,7 @@ it will be like
 <img src="data:image/gif;base64,R0lGODlhAQAKAOMKAP8PD/8dHf8sLP9KSv9dXf99ff+MjP+goP+mpv+srACtAACtAACtAACtAACtAACtACH5BAEKAA8ALAAAAAABAAoAAAQIMIxyEjJEgAgAOw==" width="8" height="10" title="6" alt="6"/>
 ```
 
-so that that HTML file can be displayed without external assets.
+so that this HTML file can be displayed without external assets.
 
 # Getting started
 
