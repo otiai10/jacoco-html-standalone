@@ -1,6 +1,6 @@
 {
   "name": "jacoco-html-asset-bundle",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Make jacoco HTML standalone without requiring image files outside",
   "main": "./lib/index.js",
   "bin": {
