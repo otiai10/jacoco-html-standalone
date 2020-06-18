@@ -109,14 +109,22 @@ export async function convertFile(fullpath: string, pool: AssetCachePool, output
     const destpath = join(outputdir, fullpath);
     await fs.mkdir(dirname(destpath), { recursive: true });
     await fs.writeFile(destpath, window.document.documentElement.outerHTML);
+    process.stderr.write('.');
 }
 
 export async function convertDir(dirpath: string, resourcedir: string, outputdir: string = "output") {
     const pool = new AssetCachePool(resourcedir);
     await pool.load();
     await fs.mkdir(outputdir, { recursive: true })
+
+    console.log("INPUT DIR:", dirpath);
+    console.log("ASSET DIR:", resourcedir);
+    console.log("OUTPUT DIR:", outputdir);
+
     const all = await getAllFilesUnderDir(dirpath);
-    all.map(async fullpath => await convertFile(fullpath, pool, outputdir));
+    console.log("FILES:", all.length);
+
+    return all.map(async fullpath => await convertFile(fullpath, pool, outputdir));
 }
 
 export default convertDir;

@@ -17,5 +17,5 @@ const argv = option('dir', {
 }).help().alias('help', 'h').argv;
 
 (async () => {
-    await convert(argv.dir, argv.resourceDir)
+    await convert(argv.dir, argv.resourceDir, argv.outDir);
 })();
