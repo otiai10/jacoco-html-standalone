@@ -1,6 +1,7 @@
 import { promises as fs } from 'fs';
 import { extname, join, dirname } from 'path';
 import { JSDOM } from 'jsdom';
+import { Semaphore } from 'await-semaphore';
 
 class AssetEntry {
     public ext: string;
@@ -72,11 +73,11 @@ class AssetCachePool {
     }
 }
 
-async function getAllFilesUnderDir(dirpath: string): Promise<string[]> {
-    const entries = await fs.readdir(dirpath);
+async function getAllFilesUnderDir(parentdir: string): Promise<string[]> {
+    const entries = await fs.readdir(parentdir);
     const results: string[] = [];
     await Promise.all(entries.map(async entry => {
-        const fullpath = join(dirpath, entry);
+        const fullpath = join(parentdir, entry);
         const stat = await fs.stat(fullpath);
         if (stat.isDirectory()) {
             results.push(... await getAllFilesUnderDir(fullpath))
@@ -100,12 +101,11 @@ export async function convertFile(fullpath: string, pool: AssetCachePool, output
         const entry = pool.getEntry(asset);
         if (entry) entry.apply(linktag, window.document);
     });
-    // FIXME: Out of memory
-    // Array.from<HTMLScriptElement>(window.document.querySelectorAll('script[type="text/javascript"]:not([src=""])')).map(scripttag => {
-    //     const asset = join(dirname(fullpath), scripttag.src);
-    //     const entry = pool.getEntry(asset);
-    //     if (entry) entry.apply(scripttag);
-    // });
+    Array.from<HTMLScriptElement>(window.document.querySelectorAll('script[type="text/javascript"]:not([src=""])')).map(scripttag => {
+        const asset = join(dirname(fullpath), scripttag.src);
+        const entry = pool.getEntry(asset);
+        if (entry) entry.apply(scripttag);
+    });
     const destpath = join(outputdir, fullpath);
     await fs.mkdir(dirname(destpath), { recursive: true });
     await fs.writeFile(destpath, window.document.documentElement.outerHTML);
@@ -124,7 +124,11 @@ export async function convertDir(dirpath: string, resourcedir: string, outputdir
     const all = await getAllFilesUnderDir(dirpath);
     console.log("FILES:", all.length);
 
-    return all.map(async fullpath => await convertFile(fullpath, pool, outputdir));
+    const semsize = 128;
+    const sem = new Semaphore(semsize);
+    console.log("SEMAPHORE:", semsize);
+
+    return Promise.all(all.map(fullpath => sem.use(() => convertFile(fullpath, pool, outputdir))));
 }
 
 export default convertDir;
