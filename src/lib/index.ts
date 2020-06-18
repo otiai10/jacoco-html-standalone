@@ -73,6 +73,16 @@ class AssetCachePool {
     }
 }
 
+class PathManager {
+    constructor(
+        public srcDir: string,
+        public outDir: string,
+    ) {}
+    public getDest(fullpath: string) {
+        return fullpath.replace(this.srcDir, this.outDir);
+    }
+}
+
 async function getAllFilesUnderDir(parentdir: string): Promise<string[]> {
     const entries = await fs.readdir(parentdir);
     const results: string[] = [];
@@ -88,7 +98,7 @@ async function getAllFilesUnderDir(parentdir: string): Promise<string[]> {
     return results;
 }
 
-export async function convertFile(fullpath: string, pool: AssetCachePool, outputdir: string) {
+export async function convertFile(fullpath: string, pool: AssetCachePool, pm: PathManager) {
     const content = await fs.readFile(fullpath);
     const { window } = new JSDOM(content);
     Array.from(window.document.querySelectorAll("img")).map(imgtag => {
@@ -106,7 +116,7 @@ export async function convertFile(fullpath: string, pool: AssetCachePool, output
         const entry = pool.getEntry(asset);
         if (entry) entry.apply(scripttag);
     });
-    const destpath = join(outputdir, fullpath);
+    const destpath = pm.getDest(fullpath);
     await fs.mkdir(dirname(destpath), { recursive: true });
     await fs.writeFile(destpath, window.document.documentElement.outerHTML);
     process.stderr.write('.');
@@ -116,6 +126,8 @@ export async function convertDir(dirpath: string, resourcedir: string, outputdir
     const pool = new AssetCachePool(resourcedir);
     await pool.load();
     await fs.mkdir(outputdir, { recursive: true })
+
+    const pm = new PathManager(dirpath, outputdir);
 
     console.log("INPUT DIR:", dirpath);
     console.log("ASSET DIR:", resourcedir);
@@ -128,7 +140,7 @@ export async function convertDir(dirpath: string, resourcedir: string, outputdir
     const sem = new Semaphore(semsize);
     console.log("SEMAPHORE:", semsize);
 
-    return Promise.all(all.map(fullpath => sem.use(() => convertFile(fullpath, pool, outputdir))));
+    return Promise.all(all.map(fullpath => sem.use(() => convertFile(fullpath, pool, pm))));
 }
 
 export default convertDir;
