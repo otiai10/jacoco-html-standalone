@@ -45,8 +45,12 @@ class AssetEntry {
         }
     }
     private applyScript(tag: HTMLScriptElement) {
+        const start = /<script>/gi;
+        const end = /<\/script>gi;
         tag.removeAttribute('src');
-        tag.innerHTML = this.content.toString();
+        var js = this.content.toString();
+        js = content.replace(start,' ').replace(end,' ');
+        tag.innerHTML = content;
         return tag;
     }
 }
