@@ -49,8 +49,8 @@ class AssetEntry {
         const end = /<\/script>gi;
         tag.removeAttribute('src');
         var js = this.content.toString();
-        js = content.replace(start,' ').replace(end,' ');
-        tag.innerHTML = content;
+        js = content.replace(start,'').replace(end,'');
+        tag.innerHTML = js;
         return tag;
     }
 }
