@@ -45,8 +45,14 @@ class AssetEntry {
         }
     }
     private applyScript(tag: HTMLScriptElement) {
+        const start = /<script>/gi;
+        const end = /<\/script>/gi;
         tag.removeAttribute('src');
-        tag.innerHTML = this.content.toString();
+        // Clean the contents of JavaScript so it doesn't break following markup.
+        // See https://github.com/otiai10/jacoco-html-asset-bundle/pull/6
+        tag.innerHTML = this.content.toString().replace(start,'').replace(end,'');
+        // FIXME: This code simply get rid of <script> and </script>,
+        //        regardless of whether it's in comment or not.
         return tag;
     }
 }
