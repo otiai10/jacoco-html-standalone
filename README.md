@@ -25,7 +25,7 @@ then
 ```bash
 jacoco-html-asset-bundle \
     -d jacocoHtml \
-    -r jacocoHtml/jacoco-resources
+    -r jacocoHtml/jacoco-resources \
     -o output \
 ```
 
