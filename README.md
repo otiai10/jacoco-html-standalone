@@ -1,6 +1,12 @@
 # jacoco-html-asset-bundle
 
-Bundle and embed image files and CSS files into HTML files so that they will be displayed properly on some context like [Azure DevOps Pipelines](https://azure.microsoft.com/en-us/services/devops/pipelines/).
+[![npm version](https://badge.fury.io/js/jacoco-html-asset-bundle.svg)](https://badge.fury.io/js/jacoco-html-asset-bundle)
+[![npm download](https://img.shields.io/npm/dt/jacoco-html-asset-bundle.svg)](https://www.npmjs.com/package/jacoco-html-asset-bundle)
+[![Node.js CI](https://github.com/otiai10/jacoco-html-asset-bundle/actions/workflows/node.js.yml/badge.svg)](https://github.com/otiai10/jacoco-html-asset-bundle/actions/workflows/node.js.yml)
+[![codecov](https://codecov.io/gh/otiai10/jacoco-html-asset-bundle/branch/main/graph/badge.svg?token=SRS1T9LRXG)](https://codecov.io/gh/otiai10/jacoco-html-asset-bundle)
+[![Maintainability](https://api.codeclimate.com/v1/badges/d7f117cb5ddc578a84e6/maintainability)](https://codeclimate.com/github/otiai10/jacoco-html-asset-bundle/maintainability)
+
+Bundle and embed image files and CSS files into HTML files so that they will be displayed properly on some context, like [Azure DevOps Pipelines](https://azure.microsoft.com/en-us/services/devops/pipelines/).
 
 # Why?
 
