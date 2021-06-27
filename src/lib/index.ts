@@ -5,7 +5,7 @@ import { Semaphore } from 'await-semaphore';
 
 class AssetEntry {
     public ext: string;
-    public content: Buffer;
+    private content?: Buffer;
     constructor(public path: string) {
         this.ext = extname(path);
     }
@@ -21,6 +21,9 @@ class AssetEntry {
         }
     }
     private applyImage(tag: HTMLImageElement) {
+        if (!this.content) {
+            throw Error("failed to apply content to IMAGE tag: content is null, call `load` first")
+        }
         switch (this.ext) {
             case '.gif':
                 tag.src = `data:image/gif;base64,${this.content.toString('base64')}`;
@@ -31,7 +34,16 @@ class AssetEntry {
                 return;
         }
     }
-    private applyLink(tag: HTMLLinkElement, doc: Document) {
+    private applyLink(tag: HTMLLinkElement, doc?: Document) {
+        if (!this.content) {
+            throw Error("failed to apply content to LINK tag: content is null, call `load` first")
+        }
+        if (!doc) {
+            throw Error("failed to apply contents to LINK tag: document is null");
+        }
+        if (!tag.parentNode) {
+            throw Error("failed to apply contents to LINK tag: parent of link is null");
+        }
         switch (this.ext) {
             case '.css':
                 const style = doc.createElement('style');
@@ -45,6 +57,9 @@ class AssetEntry {
         }
     }
     private applyScript(tag: HTMLScriptElement) {
+        if (!this.content) {
+            throw Error("failed to apply content to SCRIPT tag: content is null, call `load` first")
+        }
         const start = /<script>/gi;
         const end = /<\/script>/gi;
         tag.removeAttribute('src');
@@ -85,6 +100,7 @@ class PathManager {
         public outDir: string,
     ) {}
     public getDest(fullpath: string) {
+        // FIXME: in case srcDir has prefix "./", it doesn't match fullpath
         return fullpath.replace(this.srcDir, this.outDir);
     }
 }

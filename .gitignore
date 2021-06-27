@@ -123,3 +123,4 @@ bin
 .gradle
 .DS_Store
 local.properties
+test/output
