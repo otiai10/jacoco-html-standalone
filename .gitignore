@@ -115,9 +115,11 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-example
-output.html
-
 lib
 bin
 !src
+
+.idea
+.gradle
+.DS_Store
+local.properties
