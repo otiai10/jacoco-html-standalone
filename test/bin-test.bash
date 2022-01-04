@@ -4,11 +4,11 @@ set -e
 
 # English only, for now
 expected='Options:
-  --version          Show version number                               [boolean]
-  --dir, -d          Directory to convert                               [string]
-  --resourceDir, -r  Resource directory                                 [string]
-  --outDir, -o       Output directory                                   [string]
-  --help, -h         Show help                                         [boolean]'
+      --version      Show version number                               [boolean]
+  -d, --dir          Directory to convert                               [string]
+  -r, --resourceDir  Resource directory                                 [string]
+  -o, --outDir       Output directory                                   [string]
+  -h, --help         Show help                                         [boolean]'
 
 actual=`node ./bin/index.js -h`
 
