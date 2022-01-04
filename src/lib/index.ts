@@ -3,6 +3,16 @@ import { extname, join, dirname } from 'path';
 import { JSDOM } from 'jsdom';
 import { Semaphore } from 'await-semaphore';
 
+interface Log {
+    stdout: { write(str: Uint8Array | string, encoding?: BufferEncoding, cb?: (err?: Error) => void): boolean; }
+    stderr: { write(str: Uint8Array | string, encoding?: BufferEncoding, cb?: (err?: Error) => void): boolean; }
+}
+
+const Quiet: Log = {
+    stdout: { write(str: Uint8Array | string) { return true; } },
+    stderr: { write(str: Uint8Array | string) { return true; } },
+}
+
 class AssetEntry {
     public ext: string;
     private content?: Buffer;
@@ -120,7 +130,10 @@ async function getAllFilesUnderDir(parentdir: string): Promise<string[]> {
     return results;
 }
 
-export async function convertFile(fullpath: string, pool: AssetCachePool, pm: PathManager) {
+export async function convertFile(fullpath: string, pool: AssetCachePool, pm: PathManager, log: Log = {
+    stdout: process.stdout,
+    stderr: process.stderr,
+}) {
     const content = await fs.readFile(fullpath);
     const { window } = new JSDOM(content);
     Array.from(window.document.querySelectorAll("img")).map(imgtag => {
@@ -141,28 +154,36 @@ export async function convertFile(fullpath: string, pool: AssetCachePool, pm: Pa
     const destpath = pm.getDest(fullpath);
     await fs.mkdir(dirname(destpath), { recursive: true });
     await fs.writeFile(destpath, window.document.documentElement.outerHTML);
-    process.stderr.write('.');
+    log.stderr.write('.');
 }
 
-export async function convertDir(dirpath: string, resourcedir: string, outputdir: string = "output") {
+export async function convertDir(
+    dirpath: string,
+    resourcedir: string,
+    outputdir: string = "output",
+    log: Log = {
+        stdout: process.stdout,
+        stderr: process.stderr,
+    }
+) {
     const pool = new AssetCachePool(resourcedir);
     await pool.load();
     await fs.mkdir(outputdir, { recursive: true })
 
     const pm = new PathManager(dirpath, outputdir);
 
-    console.log("INPUT DIR:", dirpath);
-    console.log("ASSET DIR:", resourcedir);
-    console.log("OUTPUT DIR:", outputdir);
+    log.stdout.write(`INPUT DIR:\t${dirpath}\n`);
+    log.stdout.write(`ASSET DIR:\t${resourcedir}\n`);
+    log.stdout.write(`OUTPUT DIR:\t${outputdir}\n`);
 
     const all = await getAllFilesUnderDir(dirpath);
-    console.log("FILES:", all.length);
+    log.stdout.write(`FILES FOUND:\t${all.length}\n`);
 
     const semsize = 128;
     const sem = new Semaphore(semsize);
-    console.log("SEMAPHORE:", semsize);
+    log.stdout.write(`SEMAPHORE:\t${semsize}\n`);
 
-    return Promise.all(all.map(fullpath => sem.use(() => convertFile(fullpath, pool, pm))));
+    return Promise.all(all.map(fullpath => sem.use(() => convertFile(fullpath, pool, pm, log))));
 }
 
 export default convertDir;
